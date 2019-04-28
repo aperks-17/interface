@@ -4,8 +4,10 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,6 +20,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -27,6 +30,7 @@ import javafx.stage.Stage;
 
 public class Main extends Application {
 	private static List<Assignment> assignments = new ArrayList<Assignment>();
+	private static TableView tableView= new TableView<>();
 
 	@Override
 	public void start(Stage primaryStage) {
@@ -74,7 +78,17 @@ public class Main extends Application {
 			save.setOnAction(new EventHandler<ActionEvent>() {
 				@Override
 				public void handle(ActionEvent event) {
-					saveToFile(name.getText(),course.getText(),assignDate.getValue(),dueDate.getValue());
+					
+					String assignedDateStr = assignDate.getValue().format(DateTimeFormatter.ofPattern("MM/dd/yyyy"));
+					String dueDateStr = dueDate.getValue().format(DateTimeFormatter.ofPattern("MM/dd/yyyy"));
+					try {
+						saveToFile(name.getText(),course.getText(),assignedDateStr,dueDateStr);
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					
+					ReloadTableview();
 				
 				}
 			});
@@ -82,74 +96,54 @@ public class Main extends Application {
 
 			readFileIntoArray();
 			
-			TableView<Assignment> tableView;
-			tableView= new TableView<>();
 			
+			
+		
+			//TableView tableView= new TableView<>();
 			
 			tableView.setItems( GetObsList());
 			tableView=CreateTableView(tableView);
-			 
 			
-			
+			 			
 
 			grid.add(tableView, 2, 8);
-
-			/*
-			 * TableView tableView = new TableView();
-			 * 
-			 * TableColumn<String, Main> nameColumn = new TableColumn<>("Assignment Name");
-			 * nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
-			 * 
-			 * 
-			 * TableColumn<String, Main> courseColumn = new TableColumn<>("Course Name");
-			 * courseColumn.setCellValueFactory(new PropertyValueFactory<>("course"));
-			 * 
-			 * 
-			 * tableView.getColumns().add(nameColumn);
-			 * tableView.getColumns().add(courseColumn);
-			 * 
-			 * tableView.getItems().add(name); tableView.getItems().add(course);
-			 * 
-			 * 
-			 * Tableview tableview= CreateTableView();
-			 * 
-			 * VBox vbox = new VBox(tableView);
-			 * 
-			 * Scene scene2 = new Scene(vbox);
-			 * 
-			 * primaryStage.setScene(scene2);
-			 * 
-			 * primaryStage.show();
-			 */
+		
+			
+			  primaryStage.show();
+			 
 
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
+	private static void ReloadTableview()
+	{		
+		tableView.setItems( GetObsList());
+		
+	}
 	private static TableView CreateTableView(TableView inTableView) {
 
-		//TableView tableView = new TableView();
-
-		// **** Assignment Name Column
-		TableColumn<Assignment, String> nameColumn = new TableColumn<>("Assignment Name");
-		nameColumn.setMinWidth(200);
-		nameColumn.setCellValueFactory(new PropertyValueFactory<>("Name"));
-
-		// **** Assignment Name Column
-		TableColumn<Assignment, String> classNameColumn = new TableColumn<>("Class Name");
-		classNameColumn.setMinWidth(150);
-		classNameColumn.setCellValueFactory(new PropertyValueFactory<>("ClassName"));
-
-		// **** Assignment Name Column
-		TableColumn<Assignment, String> assignDateColumn = new TableColumn<>("Assigned");
-		assignDateColumn.setMinWidth(25);
-		assignDateColumn.setCellValueFactory(new PropertyValueFactory<>("AssignedDate"));
 		
 		// **** Assignment Name Column
-		TableColumn<Assignment, String> dueDateColumn = new TableColumn<>("Due");
+		TableColumn<Assignment, String> nameColumn = new TableColumn("Assignment Name");
+		nameColumn.setMinWidth(200);
+		nameColumn.setCellValueFactory(new PropertyValueFactory("Name"));
+
+		// **** Assignment Name Column
+		TableColumn<Assignment, String> classNameColumn = new TableColumn("Class Name");
+		classNameColumn.setMinWidth(150);
+		classNameColumn.setCellValueFactory(new PropertyValueFactory("ClassName"));
+
+		// **** Assignment Name Column
+		TableColumn<Assignment, String> assignDateColumn = new TableColumn("Assigned");
+		assignDateColumn.setMinWidth(25);
+		assignDateColumn.setCellValueFactory(new PropertyValueFactory("AssignedDate"));
+		
+		// **** Assignment Name Column
+		TableColumn<Assignment, String> dueDateColumn = new TableColumn("Due");
 		dueDateColumn.setMinWidth(25);
-		dueDateColumn.setCellValueFactory(new PropertyValueFactory<>("DueDate"));
+		dueDateColumn.setCellValueFactory(new PropertyValueFactory("DueDate"));
 
 		inTableView.getColumns().addAll(nameColumn, classNameColumn, assignDateColumn, dueDateColumn);
 
@@ -165,32 +159,32 @@ public class Main extends Application {
 		return oAssignments;
 	}
 	
-	public static void saveToFile(String name, String course, String assignDate, String dueDate) {
+	public static void saveToFile(String name, String course, String assignDate, String dueDate) throws IOException {
 		Assignment assignment= new Assignment();
 		
-		assignment.Name= name;
-		assignment.ClassName= course;
-		assignment.AssignedDate= assignDate;
-		assignment.DueDate= dueDate;
+		assignment.setName(name);
+		assignment.setClassName(course);
+		assignment.setAssignedDate(assignDate);
+		assignment.setDueDate(dueDate);
 		
 		assignments.add(assignment);
 		
 		String text= name+","+course+","+assignDate+","+dueDate;
 		
-		File file= new File("C:\\Users\\alper\\eclipse-workspace\\Interface\\src\\application\\class.csv");
-		String FilePath= file.getPath();
-		FileReader fr= new FileReader(file);
-		BufferedWriter writer = new BufferedWriter(fr);
+		File file= new File("C:\\Users\\tperkins\\eclipse-workspace\\Interface\\src\\application\\class.csv");
+		
+		FileWriter fw= new FileWriter(file, true);
+		BufferedWriter writer = new BufferedWriter(fw);
 		writer.newLine();
 		writer.write(text);
-		writer.close();
+		writer.flush();
 	}
 	
 	
 	
 	public static void readFileIntoArray() throws IOException {
 		
-		File file= new File("C:\\Users\\alper\\eclipse-workspace\\Interface\\src\\application\\class.csv");
+		File file= new File("C:\\Users\\tperkins\\eclipse-workspace\\Interface\\src\\application\\class.csv");
 		String FilePath= file.getPath();
 		FileReader fr= new FileReader(file);
 		BufferedReader reader = new BufferedReader(fr); 
@@ -200,10 +194,10 @@ public class Main extends Application {
 			while ((input = reader.readLine()) != null) {
 				String[] values = input.split(",");
 				Assignment assignment= new Assignment();
-				assignment.Name= values[0];
-				assignment.ClassName= values[1];
-				assignment.AssignedDate= values[2];
-				assignment.DueDate= values[3];
+				assignment.setName(values[0]);
+				assignment.setClassName(values[1]);
+				assignment.setAssignedDate(values[2]);
+				assignment.setDueDate(values[3]);
 				
 				assignments.add(assignment);
 				
