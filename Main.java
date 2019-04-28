@@ -1,6 +1,7 @@
 package application;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -73,12 +74,8 @@ public class Main extends Application {
 			save.setOnAction(new EventHandler<ActionEvent>() {
 				@Override
 				public void handle(ActionEvent event) {
-					String data = new String();
-					data = name.getText() + ", " + course.getText() + ", " + assignDate.getValue() + ", "
-							+ dueDate.getValue();
-					data = String.format("%-15s%15s%15s%15s", name.getText(), course.getText(), assignDate.getValue(),
-							dueDate.getValue());
-					// b.setText(data);
+					saveToFile(name.getText(),course.getText(),assignDate.getValue(),dueDate.getValue());
+				
 				}
 			});
 			grid.add(save, 2, 7);
@@ -167,6 +164,28 @@ public class Main extends Application {
 		}
 		return oAssignments;
 	}
+	
+	public static void saveToFile(String name, String course, String assignDate, String dueDate) {
+		Assignment assignment= new Assignment();
+		
+		assignment.Name= name;
+		assignment.ClassName= course;
+		assignment.AssignedDate= assignDate;
+		assignment.DueDate= dueDate;
+		
+		assignments.add(assignment);
+		
+		String text= name+","+course+","+assignDate+","+dueDate;
+		
+		File file= new File("C:\\Users\\alper\\eclipse-workspace\\Interface\\src\\application\\class.csv");
+		String FilePath= file.getPath();
+		FileReader fr= new FileReader(file);
+		BufferedWriter writer = new BufferedWriter(fr);
+		writer.newLine();
+		writer.write(text);
+		writer.close();
+	}
+	
 	
 	
 	public static void readFileIntoArray() throws IOException {
