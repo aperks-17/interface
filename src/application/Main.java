@@ -31,6 +31,9 @@ import javafx.stage.Stage;
 public class Main extends Application {
 	private static List<Assignment> assignments = new ArrayList<Assignment>();
 	private static TableView tableView= new TableView<>();
+	
+	//private static String  filePath = new File("class.csv").getAbsolutePath();
+	private static String  filePath = ".\\src\\application\\class.csv";
 
 	@Override
 	public void start(Stage primaryStage) {
@@ -171,7 +174,8 @@ public class Main extends Application {
 		
 		String text= name+","+course+","+assignDate+","+dueDate;
 		
-		File file= new File("C:\\Users\\tperkins\\eclipse-workspace\\Interface\\src\\application\\class.csv");
+		File file= new File("filePath");
+		//File file= new File("C:\\Users\\tperkins\\eclipse-workspace\\Interface\\src\\application\\class.csv");
 		
 		FileWriter fw= new FileWriter(file, true);
 		BufferedWriter writer = new BufferedWriter(fw);
@@ -184,8 +188,7 @@ public class Main extends Application {
 	
 	public static void readFileIntoArray() throws IOException {
 		
-		File file= new File("C:\\Users\\tperkins\\eclipse-workspace\\Interface\\src\\application\\class.csv");
-		String FilePath= file.getPath();
+		File file= new File(filePath);
 		FileReader fr= new FileReader(file);
 		BufferedReader reader = new BufferedReader(fr); 
 		
