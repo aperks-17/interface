@@ -108,7 +108,15 @@ public class Main extends Application {
 
 			grid.add(tableView, 2, 8);
 		
-			
+			/* 
+			 * Tableview tableview= CreateTableView();
+			 * 
+			 * VBox vbox = new VBox(tableView);
+			 * 
+			 * Scene scene2 = new Scene(vbox);
+			 * 
+			 * primaryStage.setScene(scene2);
+			 */
 			  primaryStage.show();
 			 
 
@@ -120,7 +128,7 @@ public class Main extends Application {
 	private static void ReloadTableview()
 	{		
 		tableView.setItems( GetObsList());
-		
+		//tableView=CreateTableView(tableView);
 	}
 	private static TableView CreateTableView(TableView inTableView) {
 
